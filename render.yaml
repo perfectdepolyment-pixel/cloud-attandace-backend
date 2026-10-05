@@ -1,0 +1,28 @@
+# Render Blueprint — deploy with "New +" -> "Blueprint" and point it at this
+# repo, or configure the web service manually using the same values below.
+services:
+  - type: web
+    name: attendance-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: attendance-db
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRE_MINUTES
+        value: "120"
+      - key: ALLOWED_ORIGINS
+        sync: false   # set manually to your Vercel URL after the frontend is deployed
+      - key: ALLOWED_ORIGIN_REGEX
+        sync: false   # optional, e.g. https://attendance-app.*\.vercel\.app
+
+databases:
+  - name: attendance-db
+    plan: free
